@@ -7,8 +7,35 @@ import { setSidebar } from "../features/dashboard/dashboardSlice";
 import { Link } from "react-router-dom";
 import SearchInput from "./SearchInput";
 import { toggleDarkMode } from "../features/darkMode/darkModeSlice";
+import { useState, useEffect } from "react";
+
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  profileImage?: string; // Assuming user has a profile image field
+}
 
 const Header = () => {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/users");
+  
+        const data: { user: User } = await res.json();
+        setUser(data.user);
+      } catch (error) {
+        console.error("Failed to fetch current user", error);
+      }
+    };
+  
+    fetchCurrentUser();
+  }, []);
+  
+
   const dispatch = useAppDispatch();
   const { darkMode } = useAppSelector((state) => state.darkMode);
 
@@ -39,26 +66,34 @@ const Header = () => {
           <Link to="/notifications">
             <HiOutlineBell className="text-xl dark:text-whiteSecondary text-blackPrimary" />
           </Link>
-          <Link to="/profile">
-            <div className="flex gap-2 items-center">
-              <img
-                src="/src/assets/profile.jpg"
-                alt="profile"
-                className="rounded-full w-10 h-10"
-              />
-              <div className="flex flex-col">
-                <p className="dark:text-whiteSecondary text-blackPrimary text-base max-xl:text-sm">
-                  Sherwood Gruninger
-                </p>
-                <p className="dark:text-whiteSecondary text-blackPrimary text-sm max-xl:text-xs">
-                  Web Developer
-                </p>
+
+          {/* Display all users */}
+          {user && (
+            <Link to={`/profiles/${user._id}`}>
+              <div className="flex gap-2 items-center">
+                {/* Optional profile image */}
+                {user.profileImage && (
+                  <img
+                    src={user.profileImage}
+                    alt={user.name}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                )}
+                <div className="flex flex-col">
+                  <p className="dark:text-whiteSecondary text-blackPrimary text-base max-xl:text-sm">
+                    {user.name}
+                  </p>
+                  <p className="dark:text-whiteSecondary text-blackPrimary text-sm max-xl:text-xs">
+                    {user.role}
+                  </p>
+                </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+          )}
         </div>
       </div>
     </header>
   );
 };
+
 export default Header;

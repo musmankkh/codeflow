@@ -1,15 +1,42 @@
 import {
-  ActivitiesByCountry,
-  ActivitiesByDevices,
-  ActivityByTime,
-  ConversionRateBySource,
-  Sidebar,
   Stats,
+  Sidebar,
   Welcome,
 } from "../components";
-import { BarChart, LineGraph, PieChart } from "../components/chart";
+// import { BarChart, LineGraph, PieChart } from "../components/chart";
+import { useState, useEffect } from "react";
+
+interface User {
+  _id: string;
+  name: string;
+}
 
 const Landing = () => {
+  const [users, setUsers] = useState<User[]>([]);
+
+  // Fetch users from the backend
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/users");
+        const data: { users: User[] } = await res.json();
+        setUsers(data.users);
+      } catch (error) {
+        console.error("Failed to fetch users", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+  };
+  
   return (
     <div className="h-auto border-t dark:border-blackSecondary border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">
       <Sidebar />
@@ -17,9 +44,14 @@ const Landing = () => {
         <div>
           <div>
             <Welcome>
-              <Welcome.Title>Good evening, Sherwood 😀</Welcome.Title>
+              {users?.map((user) => (
+                <Welcome.Title key={user._id}>
+                  {getGreeting()}, {user.name} 😀
+                </Welcome.Title>
+              ))}
+
               <Welcome.Description>
-                Here is the complete overview of your eCommerce store. Analyze
+                Here is the complete overview of our Code Flow. Analyze
                 the statistics and make smart decisions.
               </Welcome.Description>
               <Welcome.ActionButton onClick={() => console.log("Analyzing...")}>
@@ -28,32 +60,32 @@ const Landing = () => {
             </Welcome>
             <Stats />
           </div>
-          <div className="sm:w-[66%] mt-10 max-sm:w-[80%]">
+          {/* <div className="sm:w-[66%] mt-10 max-sm:w-[80%]">
             <h3 className="text-3xl dark:text-whiteSecondary text-blackPrimary font-bold mb-7 max-sm:text-2xl">
               Traffic Overview
             </h3>
             <LineGraph />
-          </div>
-          <div className="sm:w-[66%] mt-10 max-sm:w-[80%]">
+          </div> */}
+          {/* <div className="sm:w-[66%] mt-10 max-sm:w-[80%]">
             <h3 className="text-3xl dark:text-whiteSecondary text-blackPrimary font-bold mb-7 max-sm:text-2xl">
               Orders Overview
             </h3>
             <BarChart />
-          </div>
-          <div className="sm:w-[50%] mt-10 max-sm:w-[70%]">
+          </div> */}
+          {/* <div className="sm:w-[50%] mt-10 max-sm:w-[70%]">
             <h3 className="text-3xl dark:text-whiteSecondary text-blackPrimary font-bold mb-7 max-sm:text-2xl">
               Source Overview
             </h3>
             <PieChart />
-          </div>
+          </div> */}
         </div>
-        <div className="lg:grid grid-cols-2 max-[2300px]:grid-cols-1 gap-x-20 gap-y-8 lg:px-5 max-[1700px]:grid-cols-2 max-[1700px]:mt-10 max-lg:w-full max-lg:pr-5 max-lg:flex max-lg:flex-col max-lg:gap-y-5">
+        {/* <div className="lg:grid grid-cols-2 max-[2300px]:grid-cols-1 gap-x-20 gap-y-8 lg:px-5 max-[1700px]:grid-cols-2 max-[1700px]:mt-10 max-lg:w-full max-lg:pr-5 max-lg:flex max-lg:flex-col max-lg:gap-y-5">
           <ActivitiesByDevices />
           <ActivitiesByCountry />
 
           <ActivityByTime />
           <ConversionRateBySource />
-        </div>
+        </div> */}
       </div>
     </div>
   );

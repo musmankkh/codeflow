@@ -1,14 +1,61 @@
-import { HiOutlineSave, HiOutlineUpload } from "react-icons/hi";
+import { HiOutlineSave } from "react-icons/hi";
 import { InputWithLabel, Sidebar, SimpleInput, WhiteButton } from "../components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams} from "react-router-dom";
+import axios from "axios";
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const { id } = useParams(); // Assuming route is /users/edit/:id
+
+
   const [inputObject, setInputObject] = useState({
-    username: "",
+    name: "",
     email: "",
-    password: "",
-    confirmPassword: "",
   });
+
+  // Fetch user data to pre-fill form
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/users/profile/${id}`);
+        const user = response.data;
+
+        setInputObject({
+          name: user.name,
+          email: user.email,
+        });
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+      }
+    };
+
+    fetchProfile();
+  }, [id]);
+
+  const handleUpdate = async () => {
+
+    try {
+      const updatedData: {
+        name: string,
+        email: string;
+      } = {
+        name: inputObject.name,
+        email: inputObject.email,
+       
+      };
+  
+
+  
+      await axios.put(`http://localhost:8080/api/users/profile/${id}`, updatedData);
+      alert("Profile updated successfully!");
+      navigate("/");
+    } catch (error) {
+      console.error("Update error:", error);
+      alert("Failed to update user.");
+    }
+  };
+  
   return (
     <div className="h-auto border-t border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">
       <Sidebar />
@@ -22,7 +69,7 @@ const Profile = () => {
             </div>
             {/* Profile update button or any other action */}
             <WhiteButton
-                link="/profile"
+                onClick={handleUpdate} // Use the handleUpdate function here
                 textSize="lg"
                 width="48"
                 py="2"
@@ -44,32 +91,25 @@ const Profile = () => {
                 />
                 <div>
                   <p className="dark:text-whiteSecondary text-blackPrimary text-xl">
-                    Sherwood Gruninger
+                    {inputObject.name}
                   </p>
-                  <p className="dark:text-whiteSecondary text-blackPrimary">
-                    Web Developer
-                  </p>
+              
                 </div>
               </div>
               
-              <button className="dark:bg-blackPrimary bg-whiteSecondary border border-gray-600 w-72 py-2 text-lg dark:hover:border-gray-500 hover:border-gray-400 duration-200 flex items-center justify-center gap-x-2">
-              <HiOutlineUpload className="dark:text-whiteSecondary text-blackPrimary text-xl" />
-              <span className="dark:text-whiteSecondary text-blackPrimary font-medium">
-              Change profile picture
-              </span>
-            </button>
+            
               </div>
               {/* Additional sections like password change, email update, etc. */}
               <div className="flex flex-col gap-3 mt-5">
                 <InputWithLabel label="Your username">
                   <SimpleInput
                     type="text"
-                    placeholder="Your username"
-                    value={inputObject.username}
+                    placeholder="Your Name"
+                    value={inputObject.name}
                     onChange={(e) =>
                       setInputObject({
                         ...inputObject,
-                        username: e.target.value,
+                        name: e.target.value,
                       })
                     }
                   />
@@ -84,11 +124,11 @@ const Profile = () => {
                     }
                   />
                 </InputWithLabel>
-                <InputWithLabel label="New password">
+                {/* <InputWithLabel label="New password">
                   <SimpleInput
                     type="password"
                     placeholder="Enter your new password..."
-                    value={inputObject.password}
+                    value={inputObject.passwor}
                     onChange={(e) =>
                       setInputObject({
                         ...inputObject,
@@ -96,8 +136,8 @@ const Profile = () => {
                       })
                     }
                   />
-                </InputWithLabel>
-                <InputWithLabel label="Confirm new password">
+                </InputWithLabel> */}
+                {/* <InputWithLabel label="Confirm new password">
                   <SimpleInput
                     type="password"
                     placeholder="Confirm your new password..."
@@ -109,7 +149,7 @@ const Profile = () => {
                       })
                     }
                   />
-                </InputWithLabel>
+                </InputWithLabel> */}
               </div>
             </div>
           </div>

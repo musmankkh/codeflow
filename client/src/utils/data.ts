@@ -34,6 +34,11 @@ export const stockStatusList = [
 
 export const roles = [
   {
+    label: "Select Role",
+    value: "select role"
+
+  },
+  {
     label: "Admin",
     value: "admin",
   },

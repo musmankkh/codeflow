@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Sidebar, SingleStatsV2, TotalSavings } from "../components";
 import {
   HiArrowSmallDown,
@@ -6,12 +7,26 @@ import {
 } from "react-icons/hi2";
 import { HiArrowSmallUp } from "react-icons/hi2";
 import { HiShoppingCart } from "react-icons/hi2";
+import axios from "axios";
 import ChartItem from "../components/chart/ChartItem";
-import RechartsAreaChart from "../components/chart/RechartsAreaChart";
 import RechartsBarChart from "../components/chart/RechartsBarChart";
-import RechartsLineChart from "../components/chart/RechartsLineChart";
 
 const Landingv2 = () => {
+  const [studentCount, setStudentCount] = useState(0);
+
+  useEffect(() => {
+    const fetchStudentCount = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/api/users/count"); // adjust base path if needed
+        setStudentCount(res.data.totalStudents);
+      } catch (error) {
+        console.error("Failed to fetch student count:", error);
+      }
+    };
+
+    fetchStudentCount();
+  }, []);
+
   return (
     <div className="h-auto border-t dark:border-blackSecondary border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">
       <Sidebar />
@@ -64,28 +79,25 @@ const Landingv2 = () => {
           </SingleStatsV2>
 
           <SingleStatsV2>
-            <SingleStatsV2.StatsCategory statsCategory="New Users">
+            <SingleStatsV2.StatsCategory statsCategory="Total Users">
               <HiUserGroup className="text-2xl" />
             </SingleStatsV2.StatsCategory>
-            <SingleStatsV2.MoneyStats moneyAmount="450">
-              <p className="text-white dark:bg-green-700 bg-green-500 w-20 h-10 flex gap-1 items-center justify-center font-semibold">
-                <HiArrowSmallUp className="text-blackPrimary text-xl" />{" "}
-                <span>3.8%</span>
+            <SingleStatsV2.MoneyStats moneyAmount={studentCount?.toString()}>
+
+              <p className="text-white dark:bg-blue-700 bg-blue-500 w-20 h-10 flex gap-1 items-center justify-center font-semibold">
+                <HiArrowSmallUp className="text-blackPrimary text-xl" />
+                <span>N/A</span>
               </p>
             </SingleStatsV2.MoneyStats>
-            <SingleStatsV2.PercentageStats
-              isPositive={true}
-              percentage="9.8%"
-            />
+            <SingleStatsV2.PercentageStats isPositive={true} percentage="—" />
           </SingleStatsV2>
         </div>
         <div className="w-[95%] px-5 mt-10 max-md:w-[90%] max-[400px]:w-[95%] dark:bg-black bg-whiteSecondary">
+          <ChartItem title="Revenue VS Profit">
+            <RechartsBarChart />
+          </ChartItem>
 
-        <ChartItem title="Revenue VS Profit">
-          <RechartsBarChart />
-        </ChartItem>
-
-        <TotalSavings isPositive={true} percentage="25%" />
+          <TotalSavings isPositive={true} percentage="25%" />
         </div>
       </div>
     </div>

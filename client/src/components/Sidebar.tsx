@@ -43,7 +43,7 @@ const Sidebar = () => {
             className="block flex items-center self-stretch gap-4 py-4 px-6 dark:bg-blackPrimary dark:hover:bg-blackSecondary cursor-pointer max-xl:py-3 dark:text-whiteSecondary hover:bg-white text-blackPrimary bg-whiteSecondary"
           >
             <HiOutlineHome className="text-xl" />
-            <span className="text-lg">Landing pages</span>
+            <span className="text-lg">Dashboard</span>
           </div>
           {isLandingOpen && (
             <div>
@@ -54,17 +54,7 @@ const Sidebar = () => {
                 }
               >
                 <HiOutlineHome className="text-xl" />
-                <span className="text-lg">Overview v1</span>
-              </NavLink>
-
-              <NavLink
-                to="/landing-v2"
-                className={(isActiveObj) =>
-                  isActiveObj.isActive ? navActiveClass : navInactiveClass
-                }
-              >
-                <HiOutlineHome className="text-xl" />
-                <span className="text-lg">Overview v2</span>
+                <span className="text-lg">Overview</span>
               </NavLink>
             </div>
           )}

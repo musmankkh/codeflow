@@ -14,7 +14,7 @@ import {
   HelpDesk,
   HomeLayout,
   Landing,
-  LandingV2,
+  
   Login,
   Notifications,
   Orders,
@@ -41,10 +41,7 @@ const router = createBrowserRouter([
         index: true,
         element: <Landing />,
       },
-      {
-        path: "/landing-v2",
-        element: <LandingV2 />,
-      },
+
       {
         path: "/products",
         element: <Products />,
@@ -98,7 +95,7 @@ const router = createBrowserRouter([
         element: <Users />,
       },
       {
-        path: "/users/:id",
+        path: "/users/edit/:id",
         element: <EditUser />,
       },
       {
@@ -114,7 +111,7 @@ const router = createBrowserRouter([
         element: <Notifications />,
       },
       {
-        path: "/profile",
+        path: "/profiles/:id",
         element: <Profile />,
       },
     ],
