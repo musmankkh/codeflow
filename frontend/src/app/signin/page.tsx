@@ -23,7 +23,7 @@ const SigninPage = () => {
       localStorage.setItem("role", res.role); // assuming the backend sends back the role
 
       alert("Login successful!");
-      router.push(`http://localhost:5173/`);
+      router.push("/");
 
 
     } catch (error) {
